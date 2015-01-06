@@ -1,0 +1,28 @@
+{
+  "name": "powerOfThree",
+  "version": "0.0.0",
+  "description": "Cubic 2048 clone based on power of three",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/evifere/powerOfThree.git"
+  },
+  "keywords": [
+    "2048",
+    "clone",
+    "cube",
+    "3D",
+    "power",
+    "of",
+    "three"
+  ],
+  "author": "evifere",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/evifere/powerOfThree/issues"
+  },
+  "homepage": "https://github.com/evifere/powerOfThree"
+}
