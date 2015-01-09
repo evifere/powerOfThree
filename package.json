@@ -1,6 +1,6 @@
 {
   "name": "powerOfThree",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Cubic 2048 clone based on power of three",
   "main": "index.js",
   "scripts": {
