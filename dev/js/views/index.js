@@ -4,7 +4,9 @@
 
    PoT.LEFT_ARROW = 37,PoT.UP_ARROW = 38, PoT.RIGHT_ARROW = 39, PoT.DOWN_ARROW = 40;
    PoT.GO_LEFT = -0.02,PoT.GO_UP = -0.01, PoT.GO_RIGHT = -PoT.GO_LEFT, PoT.GO_DOWN = -PoT.GO_UP;
-   
+   PoT.MAIN_CUBE_WIDTH = 600;
+   PoT.DICE_WIDTH = PoT.MAIN_CUBE_WIDTH/4;
+
   /**
    * Root View
    * @type {object}
@@ -58,7 +60,7 @@
 
         this.scene = new THREE.Scene();
 
-        this.geometry = new THREE.BoxGeometry( 600, 600, 600 );
+        this.geometry = new THREE.BoxGeometry( PoT.MAIN_CUBE_WIDTH, PoT.MAIN_CUBE_WIDTH, PoT.MAIN_CUBE_WIDTH );
         this.material = new THREE.MeshNormalMaterial();
 
         this.mainCube = new THREE.Mesh( this.geometry, this.material );
@@ -67,6 +69,19 @@
         this.mainBox.material.color.set( 0x00ffff );
 
         this.scene.add( this.mainBox );
+
+        this.initBox();
+
+        this.dices = [];
+
+//        this.dice.position.set( 0 * PoT.DICE_WIDTH - 75, 0 * PoT.DICE_WIDTH  - 75, 0 * PoT.DICE_WIDTH - 75);
+
+        this.addDice( 0 * PoT.DICE_WIDTH - 75, 0 * PoT.DICE_WIDTH  - 75, 0 * PoT.DICE_WIDTH - 75);
+
+     //   this.addDice( -1 * PoT.DICE_WIDTH - 75, 0 * PoT.DICE_WIDTH  - 75, 0 * PoT.DICE_WIDTH - 75);
+
+        //this.addDice( -2 * PoT.DICE_WIDTH - 75, 0 * PoT.DICE_WIDTH  - 75, 0 * PoT.DICE_WIDTH - 75);
+
         //this.scene.add( this.mainCube );
 
         if (window.WebGLRenderingContext) {
@@ -86,6 +101,31 @@
       return this;
     },
 
+    initBox: function(){
+        this.mainCube.rotation.x = 0;
+        this.mainCube.rotation.y = -0.50;
+        this.mainBox = new THREE.Box3().setFromObject(this.mainCube);
+    },
+
+    addDice:function(Dx,Dy,Dz)
+    {
+
+        this.geometry = new THREE.BoxGeometry( PoT.DICE_WIDTH, PoT.DICE_WIDTH, PoT.DICE_WIDTH);
+        this.material = new THREE.MeshNormalMaterial();
+
+        var dice = new THREE.Mesh( this.geometry, this.material );
+
+        dice.rotation.x = 0;
+        dice.rotation.y = -0.50;
+        dice.position.set(Dx,Dy,Dz);
+
+        console.log(dice.position);
+        console.log( PoT.DICE_WIDTH);
+        this.scene.add( dice);
+
+        this.dices.push(dice);
+
+    },
     animate: function(rotationParams){
 
         // note: three.js includes requestAnimationFrame shim
@@ -93,13 +133,15 @@
 
         this.mainCube.rotation.x += rotationParams.x; //0.01;
         this.mainCube.rotation.y += rotationParams.y; // 0.02;
-        //this.mainBox.rotation.x += rotationParams.x; //0.01;
-        //this.mainBox.rotation.y += rotationParams.y; // 0.02;
+
+
+        this.dices.forEach (function(dice, index){
+            dice.rotation.x += rotationParams.x;
+            dice.rotation.y += rotationParams.y;
+        });
+
         this.mainBox = new THREE.Box3().setFromObject(this.mainCube);
         console.log(this.mainCube.rotation.x,this.mainCube.rotation.y,this.mainCube.rotation.z);
-        console.log(this.mainCube);
-        
-               // console.log(this.mainBox.rotation.x,this.mainBox.rotation.y,this.mainBox.rotation.z);
 
         this.renderer.render( this.scene, this.camera );
     }
