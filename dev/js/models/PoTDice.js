@@ -15,8 +15,18 @@ PoT.Collections.Dices = Backbone.Collection.extend({
   model: PoT.Models.Dice,
 
   initWithRandomDice:function(){
-    var randomDice = new PoT.Models.Dice({x:_.random(-2,1),y:_.random(-2,1),z:_.random(-2,1)});
+    var nbOfDice = _.random(2,4);
+
+    for(d = 0;d < nbOfDice;d++){
+        var randomDice = new PoT.Models.Dice({
+            x:_.random(-2,1),
+            y:_.random(-2,1),
+            z:_.random(-2,1),
+            value:_.random(0,1)
+        });
+
     this.add(randomDice);
+    }
   }
 });
 
