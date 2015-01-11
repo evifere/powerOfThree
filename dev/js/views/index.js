@@ -121,7 +121,7 @@
     addDice:function(model)
     {
         this.geometry = new THREE.BoxGeometry( PoT.DICE_WIDTH , PoT.DICE_WIDTH, PoT.DICE_WIDTH);
-        this.material = new THREE.MeshNormalMaterial();
+        this.material = new THREE.MeshBasicMaterial({map:this.getFaceTexture(model.get('value'))});
 
         var dice = new THREE.Mesh( this.geometry, this.material );
 
@@ -137,6 +137,27 @@
         this.scene.add( dice);
 
         return true;
+    },
+    getFaceTexture:function(text)
+    {
+        //create image
+        var canvas = document.createElement('canvas');
+        var ctx = canvas.getContext('2d');
+        canvas.width = 150;
+        canvas.height = 150;
+        ctx.font = 'Bold 40px Arial';
+        ctx.textAlign = 'center';
+
+        ctx.fillStyle = 'white';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillText(text, 0, 20);
+        ctx.strokeStyle = 'red';
+        ctx.strokeText(text, canvas.width/2, canvas.height/2);
+
+        // canvas contents will be used for a texture
+        var texture = new THREE.Texture(canvas)
+        texture.needsUpdate = true;
+        return texture;
     },
     animate: function(rotationParams){
 
