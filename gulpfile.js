@@ -33,7 +33,7 @@ gulp.task('scripts', function() {
 
 // concat app
 gulp.task('app', function() {
-  gulp.src(['dev/js/core/*.js','dev/js/views/*.js','dev/js/PoT.js'])
+  gulp.src(['dev/js/core/*.js','dev/js/models/*.js','dev/js/views/*.js','dev/js/PoT.js'])
     .pipe(concat('app.js'))
     .pipe(gulp.dest('./dist/'))
 });
