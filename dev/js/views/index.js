@@ -5,7 +5,7 @@
     * PoT constants
     */
    PoT.LEFT_ARROW = 37,PoT.UP_ARROW = 38, PoT.RIGHT_ARROW = 39, PoT.DOWN_ARROW = 40;
-   PoT.MOUSE_NO_DIRECTION = 0 ,PoT.MOUSE_UP = -1,PoT.MOUSE_DOWN = 1,PoT.MOUSE_LEFT = -2,PoT.MOUSE_RIGHT = 2;
+   PoT.MOUSE_NO_DIRECTION = 0 ,PoT.MOUSE_UP = -1,PoT.MOUSE_DOWN = 1,PoT.MOUSE_LEFT = -2,PoT.MOUSE_RIGHT = 2 ,PoT.MOUSE_WHEEL_UP = -3, PoT.MOUSE_WHEEL_DOWN = 3;
 
    PoT.GO_LEFT = -0.02,PoT.GO_UP = -0.01, PoT.GO_RIGHT = -PoT.GO_LEFT, PoT.GO_DOWN = -PoT.GO_UP;
    PoT.MAIN_CUBE_WIDTH = 600;
@@ -25,7 +25,23 @@
     lastY:0,
 
     events: {
-        'mousemove':'filterProcessDiceMove'
+        'mousemove':'filterProcessDiceMove',
+        'mousewheel canvas':'processMouseWheel'
+    },
+
+    processMouseWheel:function(e){
+        var zDirection = PoT.MOUSE_NO_DIRECTION;
+        e = window.event || e;
+
+        var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
+
+        if (delta < 0) {
+            zDirection = PoT.MOUSE_WHEEL_UP;
+        } else {
+            zDirection = PoT.MOUSE_WHEEL_DOWN;
+        }
+
+        this.applyDiceDirection(zDirection);
     },
 
     filterProcessDiceMove: _.throttle(
@@ -77,6 +93,16 @@
 
         switch(mainDirection)
         {
+            case PoT.MOUSE_WHEEL_UP:
+                console.log('MOUSE_WHEEL_UP');
+                this.moveDice('z',1);
+            break;
+
+            case PoT.MOUSE_WHEEL_DOWN:
+                console.log('MOUSE_WHEEL_DOWN');
+                this.moveDice('z',-1);
+            break;
+
             case PoT.MOUSE_UP:
                 console.log('MOUSE_UP');
                 this.moveDice('y',1);
@@ -137,10 +163,6 @@
 
         //add a key listener for processing the rotation of the main cube
         $(window).on("keydown", this.processKeyEvent.bind(this));
-
-      //  _.bindAll(this, 'render', 'refreshDicePosition');
-        
-
 
         //define a camera
         this.camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 10000 );
@@ -220,10 +242,10 @@
         );
 
         model.set('mesh',dice);
-        //model.on('change', this.refreshDicePosition, this);
 
         model.on('change:x', this.refreshDicePosition, this);
         model.on('change:y', this.refreshDicePosition, this);
+        model.on('change:z', this.refreshDicePosition, this);
 
         this.scene.add( dice);
 
