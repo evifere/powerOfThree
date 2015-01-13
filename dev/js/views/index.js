@@ -5,11 +5,13 @@
     * PoT constants
     */
    PoT.LEFT_ARROW = 37,PoT.UP_ARROW = 38, PoT.RIGHT_ARROW = 39, PoT.DOWN_ARROW = 40;
+   PoT.MOUSE_NO_DIRECTION = 0 ,PoT.MOUSE_UP = -1,PoT.MOUSE_DOWN = 1,PoT.MOUSE_LEFT = -2,PoT.MOUSE_RIGHT = 2;
+
    PoT.GO_LEFT = -0.02,PoT.GO_UP = -0.01, PoT.GO_RIGHT = -PoT.GO_LEFT, PoT.GO_DOWN = -PoT.GO_UP;
    PoT.MAIN_CUBE_WIDTH = 600;
    PoT.DICE_WIDTH = PoT.MAIN_CUBE_WIDTH/4;
    PoT.DICE_COORD_RATIO = PoT.DICE_WIDTH/2 ;
-
+   PoT.MOUSE_THROTTLE_SENSIVITY = 600;
 
   /**
    * Root View
@@ -19,7 +21,82 @@
 
     el: '#PoTContainer',
 
+    lastX:0,
+    lastY:0,
+
     events: {
+        'mousemove':'filterProcessDiceMove'
+    },
+
+    filterProcessDiceMove: _.throttle(
+        function(e) {
+            this.processDiceMove(e);
+            },
+        PoT.MOUSE_THROTTLE_SENSIVITY,
+        {leading: false}
+        )
+    ,
+    processDiceMove:function(e){
+        var xDirection = yDirection = PoT.MOUSE_NO_DIRECTION;
+
+        if (e.pageY < this.lastY) {
+            yDirection = PoT.MOUSE_UP;
+        } else {
+            yDirection = PoT.MOUSE_DOWN;
+        }
+
+        if (e.pageX < this.lastX) {
+            xDirection = PoT.MOUSE_LEFT;
+        } else {
+            xDirection = PoT.MOUSE_RIGHT;
+        }
+
+        //determine the main important direction
+        var xWeight = Math.abs(this.lastX - e.pageX);
+        var yWeight = Math.abs(this.lastY - e.pageY);
+
+        this.lastY = e.pageY;
+        this.lastX = e.pageX;
+
+        //DO NOTHING can't determine main direction
+        if(xWeight === yWeight){
+           return true;
+        }
+
+        //apply x direction
+        if(xWeight > yWeight){
+          this.applyDiceDirection(xDirection);
+        }
+        else {// apply y direction
+         this.applyDiceDirection(yDirection);
+        }
+
+
+    },
+    applyDiceDirection:function (mainDirection){
+
+        switch(mainDirection)
+        {
+            case PoT.MOUSE_UP:
+                console.log('MOUSE_UP');
+            break;
+
+            case PoT.MOUSE_DOWN:
+                console.log('MOUSE_DOWN');
+            break;
+
+            case PoT.MOUSE_LEFT:
+                console.log('MOUSE_LEFT');
+            break;
+
+            case PoT.MOUSE_RIGHT:
+                console.log('MOUSE_RIGHT');
+            break;
+
+        default:
+            console.log('Unknown mainDirection',mainDirection);
+            break;
+        }
     },
 
     processKeyEvent: function(e){
@@ -49,7 +126,7 @@
         }
 
 
-     this.animate(rotationParams);
+     this.processRotation(rotationParams);
     },
 
     initialize: function() {
@@ -159,7 +236,7 @@
         texture.needsUpdate = true;
         return texture;
     },
-    animate: function(rotationParams){
+    processRotation: function(rotationParams){
 
         this.mainCube.rotation.x += rotationParams.x;
         this.mainCube.rotation.y += rotationParams.y;
