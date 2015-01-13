@@ -79,18 +79,22 @@
         {
             case PoT.MOUSE_UP:
                 console.log('MOUSE_UP');
+                this.moveDice('y',1);
             break;
 
             case PoT.MOUSE_DOWN:
                 console.log('MOUSE_DOWN');
+                this.moveDice('y',-1);
             break;
 
             case PoT.MOUSE_LEFT:
                 console.log('MOUSE_LEFT');
+                this.moveDice('x',-1);
             break;
 
             case PoT.MOUSE_RIGHT:
                 console.log('MOUSE_RIGHT');
+                this.moveDice('x',1);
             break;
 
         default:
@@ -134,6 +138,10 @@
         //add a key listener for processing the rotation of the main cube
         $(window).on("keydown", this.processKeyEvent.bind(this));
 
+      //  _.bindAll(this, 'render', 'refreshDicePosition');
+        
+
+
         //define a camera
         this.camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 10000 );
         this.camera.position.z = 1000;
@@ -159,6 +167,7 @@
         //init the dice matrix
         this.dices = new PoT.Collections.Dices();
         this.dices.on('add', this.addDice, this);
+
         this.dices.initWithRandomDice();
 
         //add an axis helper for debug
@@ -211,9 +220,32 @@
         );
 
         model.set('mesh',dice);
+        //model.on('change', this.refreshDicePosition, this);
+
+        model.on('change:x', this.refreshDicePosition, this);
+        model.on('change:y', this.refreshDicePosition, this);
+
         this.scene.add( dice);
 
         return true;
+    },
+    moveDice:function(axis,operation){
+        this.dices.forEach (function(model, index){
+            if(Math.abs(model.get(axis) + operation)  < 3){
+                model.set(axis,model.get(axis) + operation);
+            }
+        });
+    },
+    refreshDicePosition:function(model){
+        var dice = model.get('mesh');
+
+        dice.position.set(this.diceCoord(model.get('x')),
+            this.diceCoord(model.get('y')),
+            this.diceCoord(model.get('z'))
+        );
+
+        this.renderer.render( this.scene, this.camera );
+
     },
     getFaceTexture:function(text)
     {
