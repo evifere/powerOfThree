@@ -278,9 +278,14 @@
                 if(_.isUndefined(newposition)){
                     model.set(axis,model.get(axis) + operation);
                 }
-                else{//we have a collision merge the dice
-                    newposition.set('value',newposition.get('value') + model.get('value'));
-                    model.destroy();
+                else{//we have a collision merge the dice if they have the same value
+
+                    if(newposition.get('value') === model.get('value')){
+                        newposition.set('value',newposition.get('value') + model.get('value'));
+                        model.destroy();
+                    }
+                    else
+                        return true;
                 }
             }
         });
