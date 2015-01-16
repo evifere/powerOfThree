@@ -39,6 +39,7 @@ Use the arrow keys to perfom rotation on x and y axis.
 |0.1.1 (pre-release)| add a new dice on each movement and release memory|
 |0.1.2 (pre-release)| optimize rendering and dice randomization use recursion versus loop|
 |0.1.3 (pre-release)| add a game over condition|
+|0.1.4 (pre-release)| listen to DOMMouseScroll for mousewheel mangement on FF|
 
 
 ### Last version demo page
