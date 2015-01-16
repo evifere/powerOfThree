@@ -12,7 +12,7 @@
    PoT.DICE_WIDTH = PoT.MAIN_CUBE_WIDTH/4;
    PoT.DICE_COORD_RATIO = PoT.DICE_WIDTH/2 ;
    PoT.MOUSE_THROTTLE_SENSIVITY = 600;
-
+   PoT.X_AXIS = 'x',PoT.Y_AXIS = 'y',PoT.Z_AXIS = 'z';
   /**
    * Root View
    * @type {object}
@@ -207,7 +207,7 @@
         this.renderer.setSize( window.innerWidth, window.innerHeight );
 
         //render the scene with the chosen camera
-        this.renderer.render( this.scene, this.camera );
+        this.refreshRendering();
     },
 
     diceCoord:function (c)
@@ -246,15 +246,44 @@
         model.on('change:x', this.refreshDicePosition, this);
         model.on('change:y', this.refreshDicePosition, this);
         model.on('change:z', this.refreshDicePosition, this);
+        model.on('change:value', this.refreshDiceValue, this);
+        model.on('remove', this.removeDiceFromScene, this);
 
         this.scene.add( dice);
 
         return true;
     },
+    removeDiceFromScene:function(model)
+    {
+        console.log('removeDiceFromScene',model);
+
+        this.scene.remove(model.get('mesh'));
+        this.refreshRendering();
+    },
     moveDice:function(axis,operation){
-        this.dices.forEach (function(model, index){
+        var _self = this;
+
+        this.dices.forEach (function(model, index,dices){
+            //skip if model has been removed from a previous iteration
+            if(_.isUndefined(model)){
+                return true;
+            }
+
             if(Math.abs(model.get(axis) + operation)  < 3){
-                model.set(axis,model.get(axis) + operation);
+                var newSpotCoords = model.pick(PoT.X_AXIS,PoT.Y_AXIS,PoT.Z_AXIS);
+
+                newSpotCoords[axis] += operation;
+
+                newposition = _self.dices.findWhere(newSpotCoords);
+
+                //if new position is not occupied move the dice
+                if(_.isUndefined(newposition)){
+                    model.set(axis,model.get(axis) + operation);
+                }
+                else{//we have a collision merge the dice
+                    newposition.set('value',newposition.get('value') + model.get('value'));
+                    model.destroy();
+                }
             }
         });
     },
@@ -266,8 +295,17 @@
             this.diceCoord(model.get('z'))
         );
 
+        this.refreshRendering();
+    },
+    refreshRendering:function(){
         this.renderer.render( this.scene, this.camera );
+    },
+    refreshDiceValue:function(model){
+        var dice = model.get('mesh');
 
+        dice.material = new THREE.MeshBasicMaterial({map:this.getFaceTexture(model.get('value'))});
+
+        this.refreshRendering();
     },
     getFaceTexture:function(text)
     {
@@ -306,7 +344,7 @@
 
         this.mainBox = new THREE.Box3().setFromObject(this.mainCube);
 
-        this.renderer.render( this.scene, this.camera );
+        this.refreshRendering();
     }
 
   });
