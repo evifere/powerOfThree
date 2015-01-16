@@ -261,34 +261,38 @@
     moveDice:function(axis,operation){
         var _self = this;
 
-        this.dices.forEach (function(model, index,dices){
-            //skip if model has been removed from a previous iteration
-            if(_.isUndefined(model)){
-                return true;
-            }
+        console.log(axis,operation);
 
-            if(Math.abs(model.get(axis) + operation)  < 3){
-                var newSpotCoords = model.pick(PoT.X_AXIS,PoT.Y_AXIS,PoT.Z_AXIS);
-
-                newSpotCoords[axis] += operation;
-
-                newposition = _self.dices.findWhere(newSpotCoords);
-
-                //if new position is not occupied move the dice
-                if(_.isUndefined(newposition)){
-                    model.set(axis,model.get(axis) + operation);
+        for(i=0;i < 4;++i){// process 4 times the moving in order to reach the furthe spot for each dice
+            this.dices.forEach (function(model, index,dices){
+                //skip if model has been removed from a previous iteration
+                if(_.isUndefined(model)){
+                    return true;
                 }
-                else{//we have a collision merge the dice if they have the same value
 
-                    if(newposition.get('value') === model.get('value')){
-                        newposition.set('value',newposition.get('value') + model.get('value'));
-                        model.destroy();
+                if(Math.abs(model.get(axis) + operation)  < 3){
+                    var newSpotCoords = model.pick(PoT.X_AXIS,PoT.Y_AXIS,PoT.Z_AXIS);
+
+                    newSpotCoords[axis] += operation;
+
+                    newposition = _self.dices.findWhere(newSpotCoords);
+
+                    //if new position is not occupied move the dice
+                    if(_.isUndefined(newposition)){
+                        model.set(axis,model.get(axis) + operation);
                     }
-                    else
-                        return true;
+                    else{//we have a collision merge the dice if they have the same value
+
+                        if(newposition.get('value') === model.get('value')){
+                            newposition.set('value',newposition.get('value') + model.get('value'));
+                            model.destroy();
+                        }
+                        else
+                            return true;
+                    }
                 }
-            }
-        });
+            });
+        }//end for loop
     },
     refreshDicePosition:function(model){
         var dice = model.get('mesh');
