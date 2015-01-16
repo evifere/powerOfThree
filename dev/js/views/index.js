@@ -305,8 +305,9 @@
 
         this.refreshRendering();
     },
-    getFaceTexture:function(text)
+    getFaceTexture:function(faceValue)
     {
+        var numberToDisplay = Math.pow(faceValue,3).toString();
         //create image
         var canvas = document.createElement('canvas');
         var ctx = canvas.getContext('2d');
@@ -317,9 +318,8 @@
 
         ctx.fillStyle = 'white';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.fillText(text, 0, 20);
         ctx.strokeStyle = 'red';
-        ctx.strokeText(text, canvas.width/2, canvas.height/2);
+        ctx.strokeText(numberToDisplay, canvas.width/2, canvas.height/2);
 
         // canvas contents will be used for a texture
         var texture = new THREE.Texture(canvas)
