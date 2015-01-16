@@ -38,6 +38,7 @@ Use the arrow keys to perfom rotation on x and y axis.
 |0.1.0 (pre-release)| merge dice value for dice occupying the same spot and the same value go to the further spot on each direction|
 |0.1.1 (pre-release)| add a new dice on each movement and release memory|
 |0.1.2 (pre-release)| optimize rendering and dice randomization use recursion versus loop|
+|0.1.3 (pre-release)| add a game over condition|
 
 
 ### Last version demo page
