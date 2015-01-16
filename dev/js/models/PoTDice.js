@@ -22,7 +22,7 @@ PoT.Collections.Dices = Backbone.Collection.extend({
             x:_.random(-2,1),
             y:_.random(-2,1),
             z:_.random(-2,1),
-            value:_.random(0,1)
+            value:_.random(1,2)
         });
 
     this.add(randomDice);
