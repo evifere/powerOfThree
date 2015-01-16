@@ -28,7 +28,8 @@
 
     events: {
         'mousemove':'filterProcessDiceMove',
-        'mousewheel canvas':'processMouseWheel'
+        'mousewheel canvas':'processMouseWheel',//other browser
+        'DOMMouseScroll canvas':'processMouseWheel' // FF mousewheel event
     },
 
     processMouseWheel:function(e){
