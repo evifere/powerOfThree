@@ -257,7 +257,12 @@
     },
     removeDiceFromScene:function(model)
     {
-        this.scene.remove(model.get('mesh'));
+        var dice = model.get('mesh');
+        dice.texture.dispose();
+        dice.material.dispose();
+        dice.geometry.dispose();
+
+        this.scene.remove(dice);
         this.refreshRendering();
     },
     moveDice:function(axis,operation){
@@ -317,6 +322,8 @@
         ),
     refreshDiceValue:function(model){
         var dice = model.get('mesh');
+
+        dice.material.dispose();
 
         dice.material = new THREE.MeshBasicMaterial({map:this.getFaceTexture(model.get('value'))});
 
