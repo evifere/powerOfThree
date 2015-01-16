@@ -1,5 +1,7 @@
 (function(win, doc, PoT){
 
+PoT.MAX_DICES = 64;
+
 PoT.Models.Dice = Backbone.Model.extend({
 
     defaults: {
@@ -24,6 +26,12 @@ PoT.Collections.Dices = Backbone.Collection.extend({
             value:_.random(1,2)
         });
 
+    if(this.length === PoT.MAX_DICES)
+        {
+        console.log('You loose T.T');
+        return false;
+        }
+
     //do not add a new dice on an occupied spot
     if(!this.isSpotOccupied(randomDice)){
         this.add(randomDice);
@@ -35,7 +43,7 @@ PoT.Collections.Dices = Backbone.Collection.extend({
     }
   },
   addRandomDice:function(){
-    this.initWithRandomDice(1);
+    return this.initWithRandomDice(1);
   },
   isSpotOccupied:function(model){
     var newSpotCoords = model.pick(PoT.X_AXIS,PoT.Y_AXIS,PoT.Z_AXIS);

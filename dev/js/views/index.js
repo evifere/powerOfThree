@@ -299,9 +299,30 @@
             });
         }//end for loop
 
-        this.dices.addRandomDice();
+        //if we can't add a new dice we loose.
+        if(this.dices.addRandomDice() === false){
+            return this.processGameOver();
+        }
+
         this.refreshRendering();
 
+    },
+    processGameOver:function(){
+        this.dices.off();
+
+        this.dices.forEach (function(model, index){
+        model.off();
+        });
+
+        this.stopListening();
+
+        $(window).off();
+
+        this.$el.off();
+        alert('You Loose T.T');
+
+        window.location.reload();
+        return false;
     },
     refreshDicePosition:function(model){
         var dice = model.get('mesh');
