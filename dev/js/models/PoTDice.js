@@ -24,10 +24,14 @@ PoT.Collections.Dices = Backbone.Collection.extend({
             value:_.random(1,2)
         });
 
-        //do not add a new dice on an occupied spot
-        while(this.isSpotOccupied(randomDice));
-
+    //do not add a new dice on an occupied spot
+    if(!this.isSpotOccupied(randomDice)){
         this.add(randomDice);
+        }
+    else
+        {//retry
+        this.addRandomDice(nbOfDice);
+        }
     }
   },
   addRandomDice:function(){

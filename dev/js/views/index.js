@@ -258,7 +258,7 @@
     removeDiceFromScene:function(model)
     {
         var dice = model.get('mesh');
-        dice.texture.dispose();
+
         dice.material.dispose();
         dice.geometry.dispose();
 
@@ -313,13 +313,9 @@
 
         this.refreshRendering();
     },
-    refreshRendering:_.throttle(
-        function(e) {
+    refreshRendering:function() {
              this.renderer.render( this.scene, this.camera );
             },
-        PoT.REFRESH_SCENE_THROTTLE_SENSIVITY,
-        {leading: false}
-        ),
     refreshDiceValue:function(model){
         var dice = model.get('mesh');
 
@@ -351,6 +347,7 @@
         return texture;
     },
     processRotation: function(rotationParams){
+        var _self = this;
 
         this.mainCube.rotation.x += rotationParams.x;
         this.mainCube.rotation.y += rotationParams.y;
@@ -362,6 +359,9 @@
 
             dice.rotation.x += rotationParams.x;
             dice.rotation.y += rotationParams.y;
+
+            _self.refreshRendering();
+
         });
 
         this.mainBox = new THREE.Box3().setFromObject(this.mainCube);
