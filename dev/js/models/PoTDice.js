@@ -14,8 +14,7 @@ PoT.Models.Dice = Backbone.Model.extend({
 PoT.Collections.Dices = Backbone.Collection.extend({
   model: PoT.Models.Dice,
 
-  initWithRandomDice:function(){
-    var nbOfDice = _.random(2,4);
+  initWithRandomDice:function(nbOfDice){
 
     for(d = 0;d < nbOfDice;d++){
         var randomDice = new PoT.Models.Dice({
@@ -25,8 +24,19 @@ PoT.Collections.Dices = Backbone.Collection.extend({
             value:_.random(1,2)
         });
 
-    this.add(randomDice);
+        //do not add a new dice on an occupied spot
+        while(this.isSpotOccupied(randomDice));
+
+        this.add(randomDice);
     }
+  },
+  addRandomDice:function(){
+    this.initWithRandomDice(1);
+  },
+  isSpotOccupied:function(model){
+    var newSpotCoords = model.pick(PoT.X_AXIS,PoT.Y_AXIS,PoT.Z_AXIS);
+
+    return !_.isUndefined(this.findWhere(newSpotCoords));
   }
 });
 

@@ -12,6 +12,8 @@
    PoT.DICE_WIDTH = PoT.MAIN_CUBE_WIDTH/4;
    PoT.DICE_COORD_RATIO = PoT.DICE_WIDTH/2 ;
    PoT.MOUSE_THROTTLE_SENSIVITY = 600;
+   PoT.REFRESH_SCENE_THROTTLE_SENSIVITY = 150;
+
    PoT.X_AXIS = 'x',PoT.Y_AXIS = 'y',PoT.Z_AXIS = 'z';
   /**
    * Root View
@@ -190,7 +192,7 @@
         this.dices = new PoT.Collections.Dices();
         this.dices.on('add', this.addDice, this);
 
-        this.dices.initWithRandomDice();
+        this.dices.initWithRandomDice(_.random(2,4));
 
         //add an axis helper for debug
         this.axisHelper = new THREE.AxisHelper( 300 );
@@ -261,8 +263,6 @@
     moveDice:function(axis,operation){
         var _self = this;
 
-        console.log(axis,operation);
-
         for(i=0;i < 4;++i){// process 4 times the moving in order to reach the furthe spot for each dice
             this.dices.forEach (function(model, index,dices){
                 //skip if model has been removed from a previous iteration
@@ -293,6 +293,10 @@
                 }
             });
         }//end for loop
+
+        this.dices.addRandomDice();
+        this.refreshRendering();
+
     },
     refreshDicePosition:function(model){
         var dice = model.get('mesh');
@@ -304,9 +308,13 @@
 
         this.refreshRendering();
     },
-    refreshRendering:function(){
-        this.renderer.render( this.scene, this.camera );
-    },
+    refreshRendering:_.throttle(
+        function(e) {
+             this.renderer.render( this.scene, this.camera );
+            },
+        PoT.REFRESH_SCENE_THROTTLE_SENSIVITY,
+        {leading: false}
+        ),
     refreshDiceValue:function(model){
         var dice = model.get('mesh');
 
