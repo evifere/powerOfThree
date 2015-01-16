@@ -255,8 +255,6 @@
     },
     removeDiceFromScene:function(model)
     {
-        console.log('removeDiceFromScene',model);
-
         this.scene.remove(model.get('mesh'));
         this.refreshRendering();
     },
