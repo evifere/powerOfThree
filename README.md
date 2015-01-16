@@ -35,6 +35,7 @@ Use the arrow keys to perfom rotation on x and y axis.
 | ------------- |-----:|
 |0.0.8 (pre-release)| add mouse weel listener for z axis dce moving|
 |0.0.9 (pre-release)| merge dice value for dice occupying the same spot|
+|0.1.0 (pre-release)| merge dice value for dice occupying the same spot and the same value go to the further spot on each direction|
 
 ### Last version demo page
 
