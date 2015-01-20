@@ -52,6 +52,7 @@ Use the arrow keys to perfom rotation on x and y axis.
 |0.1.3 (pre-release)| add a game over condition|
 |0.1.4 (pre-release)| listen to DOMMouseScroll for mousewheel mangement on FF|
 |0.1.5 (pre-release)| display the current score and use renderAnimationFrame|
+|0.1.6 (pre-release)| use touch event if avalaible to move dices|
 
 
 ### Last version demo page
