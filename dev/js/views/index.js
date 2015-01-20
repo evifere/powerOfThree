@@ -29,9 +29,12 @@
 
     lastX:0,
     lastY:0,
+    lastTouch:0,
 
     events: {
         'mousemove':'filterProcessDiceMove',
+        'touchend canvas':'processTouchEnd',
+        'touchstart canvas':'processTouchStart',
         'mousewheel canvas':'processMouseWheel',//other browser
         'DOMMouseScroll canvas':'processMouseWheel' // FF mousewheel event
     },
@@ -43,9 +46,9 @@
         var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
 
         if (delta < 0) {
-            zDirection = PoT.MOUSE_WHEEL_UP;
-        } else {
             zDirection = PoT.MOUSE_WHEEL_DOWN;
+        } else {
+            zDirection = PoT.MOUSE_WHEEL_UP;
         }
 
         this.applyDiceDirection(zDirection);
@@ -59,6 +62,30 @@
         {leading: false}
         )
     ,
+    processTouchStart:function(e){
+        //save x1,y1 position
+        this.lastTouch = e.originalEvent.touches[0];
+    },
+
+    processTouchEnd:function(e){
+        //save x2,y2 position
+        var currentTouch = e.originalEvent.changedTouches[0];
+        var Xdelta = currentTouch.clientX - this.lastTouch.clientX;
+        var Ydelta = currentTouch.clientY - this.lastTouch.clientY;
+        var directorCoeff = Ydelta/Xdelta;
+
+        if(Math.abs(directorCoeff) >= 0.5 && Math.abs(directorCoeff) < 1){//moving on z axis
+            if(Ydelta > 0){
+                this.applyDiceDirection(PoT.MOUSE_WHEEL_DOWN);
+            }else {
+                 this.applyDiceDirection(PoT.MOUSE_WHEEL_UP);
+            }
+        }
+        else{//moving on x or y axis
+            this.processDiceMove(e.originalEvent.changedTouches[0]);
+        }
+    },
+
     processDiceMove:function(e){
         var xDirection = yDirection = PoT.MOUSE_NO_DIRECTION;
 
@@ -102,12 +129,12 @@
         {
             case PoT.MOUSE_WHEEL_UP:
                 console.log('MOUSE_WHEEL_UP');
-                this.moveDice('z',1);
+                this.moveDice('z',-1);
             break;
 
             case PoT.MOUSE_WHEEL_DOWN:
                 console.log('MOUSE_WHEEL_DOWN');
-                this.moveDice('z',-1);
+                this.moveDice('z',1);
             break;
 
             case PoT.MOUSE_UP:

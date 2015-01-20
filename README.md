@@ -18,7 +18,7 @@ gulp connect
 
 Use the arrow keys to perfom rotation on x and y axis.
 
-### Actual Controls : moving the dice
+### Actual Controls : moving the dice with a mouse
 
 | Axis          | Mouse Wheel or Mouse Move| Description  |
 | ------------- |:-------------:| -----:|
@@ -28,6 +28,17 @@ Use the arrow keys to perfom rotation on x and y axis.
 | Y | mouse move down | move the dices down|
 | Z | mouse wheel down | move the dices on the front|
 | Z | mouse wheel up| move the dices on the back|
+
+### Actual Controls : moving the dice with touch events
+
+| Axis          | Draw a line| Description  |
+| ------------- |:-------------:| -----:|
+| X | draw an horizontal line from right to left | move the dices on the  left|
+| X | draw an horizontal line from left to right | move the dice on the  right|
+| Y | draw a vertical line from bottom to up | move the dices up|
+| Y | draw a vertical line from up to bottom | move the dices down|
+| Z | draw an oblique line from up to bottom  | move the dices on the front|
+| Z | draw an oblique line from bottom to up | move the dices on the back|
 
 ### Change log
 
@@ -41,6 +52,7 @@ Use the arrow keys to perfom rotation on x and y axis.
 |0.1.3 (pre-release)| add a game over condition|
 |0.1.4 (pre-release)| listen to DOMMouseScroll for mousewheel mangement on FF|
 |0.1.5 (pre-release)| display the current score and use renderAnimationFrame|
+|0.1.6 (pre-release)| use touch event if avalaible to move dices|
 
 
 ### Last version demo page
