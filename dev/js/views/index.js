@@ -15,6 +15,10 @@
    PoT.REFRESH_SCENE_THROTTLE_SENSIVITY = 150;
 
    PoT.X_AXIS = 'x',PoT.Y_AXIS = 'y',PoT.Z_AXIS = 'z';
+
+   PoT.SCORE_COLOR_BACKGROUND = 0x9cbee2;//0x5c5c5c;
+   PoT.SCORE_TEXT_COLOR = 0xd29ce2;//0x5c5c5c;
+
   /**
    * Root View
    * @type {object}
@@ -196,8 +200,14 @@
         this.dices.initWithRandomDice(_.random(2,4));
 
         //add an axis helper for debug
-        this.axisHelper = new THREE.AxisHelper( 300 );
-        this.scene.add( this.axisHelper );
+        //this.axisHelper = new THREE.AxisHelper( 300 );
+        //this.scene.add( this.axisHelper );
+
+        //add score zone
+        this.initScoreTab();
+
+        //bind the refresh score value on collection add
+        this.dices.on('add', this.refreshScoreValue, this);
 
         //choose the proper renderer
         if (window.WebGLRenderingContext) {
@@ -210,7 +220,7 @@
         this.renderer.setSize( window.innerWidth, window.innerHeight );
 
         //render the scene with the chosen camera
-        this.refreshRendering();
+        this.renderScene();
     },
 
     diceCoord:function (c)
@@ -250,6 +260,7 @@
         model.on('change:y', this.refreshDicePosition, this);
         model.on('change:z', this.refreshDicePosition, this);
         model.on('change:value', this.refreshDiceValue, this);
+        model.on('change:value',this.refreshScoreValue,this);
         model.on('remove', this.removeDiceFromScene, this);
 
         this.scene.add( dice);
@@ -264,7 +275,6 @@
         dice.geometry.dispose();
 
         this.scene.remove(dice);
-        this.refreshRendering();
     },
     moveDice:function(axis,operation){
         var _self = this;
@@ -305,8 +315,6 @@
             return this.processGameOver();
         }
 
-        this.refreshRendering();
-
     },
     processGameOver:function(){
         this.dices.off();
@@ -320,7 +328,7 @@
         $(window).off();
 
         this.$el.off();
-        alert('You Loose T.T');
+        alert('You Loose T.T : Your actual score is ' + this.getTotalScore());
 
         window.location.reload();
         return false;
@@ -333,20 +341,35 @@
             this.diceCoord(model.get('z'))
         );
 
-        this.refreshRendering();
     },
-    refreshRendering:function() {
-             this.renderer.render( this.scene, this.camera );
-            },
+
+    renderScene:function () {
+
+    requestAnimationFrame(this.renderScene.bind(this));
+
+    this.renderer.render( this.scene, this.camera );
+    },
+
     refreshDiceValue:function(model){
         var dice = model.get('mesh');
 
         dice.material.dispose();
 
         dice.material = new THREE.MeshBasicMaterial({map:this.getFaceTexture(model.get('value'))});
-
-        this.refreshRendering();
     },
+
+    refreshScoreValue:function(){
+        this.scorePlane.material = new THREE.MeshBasicMaterial( {color: PoT.SCORE_COLOR_BACKGROUND, side: THREE.DoubleSide,map:this.getScoreTexture(this.getTotalScore())} );
+    },
+    /**
+     * getTotalScore return the power of three sum of each dice
+     * @return int
+     */
+    getTotalScore:function()
+    {
+        return this.dices.reduce(function(sum, dice){return sum + Math.pow(dice.get('value'),3);}, 0);
+    },
+
     getFaceTexture:function(faceValue)
     {
         var numberToDisplay = Math.pow(faceValue,3).toString();
@@ -368,27 +391,52 @@
         texture.needsUpdate = true;
         return texture;
     },
+    initScoreTab:function(scoreValue)
+    {
+    var geometry = new THREE.PlaneBufferGeometry( 512, 512, 1 );
+    var material = new THREE.MeshBasicMaterial( {color: PoT.SCORE_COLOR_BACKGROUND, side: THREE.DoubleSide,map:this.getScoreTexture(this.getTotalScore())} );
+    this.scorePlane = new THREE.Mesh( geometry, material );
+    this.scorePlane.position.set(1000,-100,0);
+
+    this.scene.add(this.scorePlane);
+    },
+    getScoreTexture:function(scoreValue){
+        //create image
+        var canvas = document.createElement('canvas');
+        var ctx = canvas.getContext('2d');
+        canvas.width = 150;
+        canvas.height = 150;
+        ctx.font = 'Bold 16px Arial';
+        ctx.textAlign = 'center';
+
+        ctx.fillStyle = 'white';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.strokeStyle = PoT.SCORE_TEXT_COLOR;
+        ctx.strokeText('Score : ' + scoreValue, canvas.width/2, canvas.height/2);
+
+        // canvas contents will be used for a texture
+        var texture = new THREE.Texture(canvas)
+        texture.needsUpdate = true;
+
+        return texture;
+    },
     processRotation: function(rotationParams){
         var _self = this;
 
         this.mainCube.rotation.x += rotationParams.x;
         this.mainCube.rotation.y += rotationParams.y;
-        this.axisHelper.rotation.x += rotationParams.x;
-        this.axisHelper.rotation.y += rotationParams.y;
+        //this.axisHelper.rotation.x += rotationParams.x;
+        //this.axisHelper.rotation.y += rotationParams.y;
 
         this.dices.forEach (function(model, index){
             var dice = model.get('mesh');
 
             dice.rotation.x += rotationParams.x;
             dice.rotation.y += rotationParams.y;
-
-            _self.refreshRendering();
-
         });
 
         this.mainBox = new THREE.Box3().setFromObject(this.mainCube);
 
-        this.refreshRendering();
     }
 
   });
