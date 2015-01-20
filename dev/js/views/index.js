@@ -206,6 +206,9 @@
         //add score zone
         this.initScoreTab();
 
+        //bind the refresh score value on collection add
+        this.dices.on('add', this.refreshScoreValue, this);
+
         //choose the proper renderer
         if (window.WebGLRenderingContext) {
             this.renderer = new THREE.WebGLRenderer();
