@@ -425,8 +425,8 @@
 
         this.mainCube.rotation.x += rotationParams.x;
         this.mainCube.rotation.y += rotationParams.y;
-        this.axisHelper.rotation.x += rotationParams.x;
-        this.axisHelper.rotation.y += rotationParams.y;
+        //this.axisHelper.rotation.x += rotationParams.x;
+        //this.axisHelper.rotation.y += rotationParams.y;
 
         this.dices.forEach (function(model, index){
             var dice = model.get('mesh');
