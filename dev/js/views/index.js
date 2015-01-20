@@ -200,8 +200,8 @@
         this.dices.initWithRandomDice(_.random(2,4));
 
         //add an axis helper for debug
-        this.axisHelper = new THREE.AxisHelper( 300 );
-        this.scene.add( this.axisHelper );
+        //this.axisHelper = new THREE.AxisHelper( 300 );
+        //this.scene.add( this.axisHelper );
 
         //add score zone
         this.initScoreTab();
@@ -217,7 +217,7 @@
         this.renderer.setSize( window.innerWidth, window.innerHeight );
 
         //render the scene with the chosen camera
-        this.refreshRendering();
+        this.renderScene();
     },
 
     diceCoord:function (c)
@@ -272,7 +272,6 @@
         dice.geometry.dispose();
 
         this.scene.remove(dice);
-        this.refreshRendering();
     },
     moveDice:function(axis,operation){
         var _self = this;
@@ -313,8 +312,6 @@
             return this.processGameOver();
         }
 
-        this.refreshRendering();
-
     },
     processGameOver:function(){
         this.dices.off();
@@ -341,21 +338,21 @@
             this.diceCoord(model.get('z'))
         );
 
-        this.refreshRendering();
     },
-    refreshRendering:function() {
-             this.renderer.render( this.scene, this.camera );
-            },
+
+    renderScene:function () {
+
+    requestAnimationFrame(this.renderScene.bind(this));
+
+    this.renderer.render( this.scene, this.camera );
+    },
+
     refreshDiceValue:function(model){
         var dice = model.get('mesh');
 
         dice.material.dispose();
 
         dice.material = new THREE.MeshBasicMaterial({map:this.getFaceTexture(model.get('value'))});
-
-        //this.scorePlane.material = new THREE.MeshBasicMaterial( {color: PoT.SCORE_COLOR_BACKGROUND, side: THREE.DoubleSide,map:this.getScoreTexture(this.getTotalScore())} );
-
-        this.refreshRendering();
     },
 
     refreshScoreValue:function(){
@@ -433,14 +430,10 @@
 
             dice.rotation.x += rotationParams.x;
             dice.rotation.y += rotationParams.y;
-
-            _self.refreshRendering();
-
         });
 
         this.mainBox = new THREE.Box3().setFromObject(this.mainCube);
 
-        this.refreshRendering();
     }
 
   });
