@@ -26,6 +26,14 @@
      */
     after: function() {},
 
+    home: function() {
+      this.before();
+
+      PoT.Views.Instances.HomeView = new PoT.Views.HomeView();
+      PoT.Views.Instances.HomeView.render();
+
+      this.after();
+        },
     game: function() {
       this.before();
 
