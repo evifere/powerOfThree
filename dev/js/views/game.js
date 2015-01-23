@@ -25,6 +25,8 @@
    */
   PoT.Views.GameView = Backbone.View.extend({
 
+    template: tpl('game'),
+
     el: '#PoTContainer',
 
     lastX:0,
@@ -263,6 +265,9 @@
     },
 
     render: function() {
+    this.$el.html(this.template);
+
+    console.log(this.$el);
     if(!_.isUndefined(this.renderer))
         this.$el[0].appendChild(this.renderer.domElement);
     else
@@ -368,7 +373,8 @@
         this.$el.off();
         alert('You Loose T.T : Your actual score is ' + this.getTotalScore());
 
-        window.location.reload();
+        PoT.AppRouter.Instance.navigate('', true);
+
         return false;
     },
     refreshDicePosition:function(model){

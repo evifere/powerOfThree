@@ -27,6 +27,7 @@
   "homepage": "https://github.com/evifere/powerOfThree",
   "devDependencies": {
     "backbone": "^1.1.2",
+    "bootstrap": "^3.3.2",
     "gulp": "^3.8.10",
     "gulp-concat": "^2.4.3",
     "gulp-connect": "^2.2.0",

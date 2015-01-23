@@ -10,6 +10,14 @@
 
     template: tpl('home'),
 
+    events:{
+        'click #start_game':'startGame'
+    },
+
+    startGame:function(){
+        PoT.AppRouter.Instance.navigate('game', true);
+    },
+
     initialize: function() {},
 
     render:function(){

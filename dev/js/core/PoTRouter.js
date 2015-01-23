@@ -18,7 +18,11 @@
      * Used before every action
      * @return {void}
      */
-    before: function() {},
+    before: function() {
+        /*if(_.isUndefined(PoT.Views.Instances.HomeView)){
+            this.home();
+        }*/
+    },
 
     /**
      * Used after every action
@@ -27,6 +31,7 @@
     after: function() {},
 
     home: function() {
+      console.log('home');
       this.before();
 
       PoT.Views.Instances.HomeView = new PoT.Views.HomeView();
@@ -35,6 +40,7 @@
       this.after();
         },
     game: function() {
+        console.log('game');
       this.before();
 
       PoT.Views.Instances.GameView = new PoT.Views.GameView();
