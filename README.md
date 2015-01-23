@@ -54,6 +54,7 @@ Use the arrow keys to perfom rotation on x and y axis.
 |0.1.5 (pre-release)| display the current score and use renderAnimationFrame|
 |0.1.6 (pre-release)| use touch event if avalaible to move dices|
 |0.1.7 (pre-release)| detect WebGL and display error if not avalaible|
+|0.1.8 (pre-release)| add home and game template with corresponding controllers|
 
 
 ### Last version demo page

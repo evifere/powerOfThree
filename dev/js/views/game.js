@@ -271,7 +271,9 @@
     this.$el.append(this.template);
 
     if(!_.isUndefined(this.renderer)){
+        //append canvas to the DOM
        this.$el.append(this.renderer.domElement);
+       //tricks in order not to use a subview for canvas
        $(this.renderer.domElement).wrap(this.subtemplate());
        }
     else
