@@ -23,7 +23,7 @@
     PoT.AppRouter = {};
     PoT.AppRouter.Instance = {};
     PoT.Events = {};
-    PoT.version = "0.1.6";
+    PoT.version = "0.1.7";
 
 
 
