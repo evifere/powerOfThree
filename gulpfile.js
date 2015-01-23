@@ -4,7 +4,9 @@ var gulp = require('gulp');
 var jshint  = require('gulp-jshint'),
     uglify  = require('gulp-uglify'),
     concat  = require('gulp-concat'),
+    minifyHTML = require('gulp-minify-html');
     connect = require('gulp-connect'),
+    partials   = require('gulp-partial-to-script'),
     path    = require('path');
 
 // Define tasks
@@ -41,13 +43,32 @@ gulp.task('app', function() {
 
 // concat app
 gulp.task('index', function() {
-  gulp.src(['dev/index.html'])
+
+ gulp.src('dev/partials/*.html')
+    .pipe(partials())
+    .pipe(concat('templates.html'))
+    .pipe(gulp.dest('./build')).on("end", function() {
+
+    gulp.src(['dev/header.html','./build/templates.html','dev/index.html'])
     .pipe(concat('index.html'))
+    .pipe(minifyHTML({spare: true}))
     .pipe(gulp.dest('./dist/'))
+
+    });
 });
 
 // The default task (called when you run `gulp` from cli)
 gulp.task('default', ['app','scripts','index']);
+
+//build templates
+gulp.task('buildTemplates', function () {
+
+ gulp.src('dev/partials/*.html')
+    .pipe(partials())
+    .pipe(concat('templates.html'))
+    .pipe(gulp.dest('./dist'))
+    ;
+});
 
 //start a local webserver
 gulp.task('connect', function() {

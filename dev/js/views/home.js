@@ -8,11 +8,14 @@
 
     el: '#PoTContainer',
 
+    template: tpl('home'),
+
     initialize: function() {},
 
     render:function(){
 
-    this.$el.append('<div>Home page</div>');
+    this.$el.html(this.template);
+      //this.$('#start').button();
 
     return this;
     }
