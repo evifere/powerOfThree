@@ -4,6 +4,7 @@
     PoT.AppRouter = Backbone.Router.extend({
      routes: {
       '': 'home',
+      'game': 'game',
       '*path': 'redirect404' // ALWAYS MUST BE THE LAST ROUTE
         },
 
@@ -25,11 +26,11 @@
      */
     after: function() {},
 
-    home: function() {
+    game: function() {
       this.before();
 
-      PoT.Views.Instances.HomeIndex = new PoT.Views.HomeIndex();
-      PoT.Views.Instances.HomeIndex.render();
+      PoT.Views.Instances.GameView = new PoT.Views.GameView();
+      PoT.Views.Instances.GameView.render();
 
       this.after();
         },

@@ -20,10 +20,10 @@
    PoT.SCORE_TEXT_COLOR = 0xd29ce2;//0x5c5c5c;
 
   /**
-   * Root View
-   * @type {object}
+   * GameView
+   * @type Backbone.View
    */
-  PoT.Views.HomeIndex = Backbone.View.extend({
+  PoT.Views.GameView = Backbone.View.extend({
 
     el: '#PoTContainer',
 
