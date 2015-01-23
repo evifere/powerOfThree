@@ -238,7 +238,14 @@
 
         //choose the proper renderer
         if (window.WebGLRenderingContext) {
-            this.renderer = new THREE.WebGLRenderer();
+            try {
+                this.renderer = new THREE.WebGLRenderer();
+                }
+            catch (e){
+                console.error('No WebGL here try another',e);
+                this.renderer = void(0);
+                return false;
+                }
             } else {
             this.renderer = new THREE.CanvasRenderer();
             };
@@ -256,7 +263,11 @@
     },
 
     render: function() {
-      this.$el[0].appendChild(this.renderer.domElement);
+    if(!_.isUndefined(this.renderer))
+        this.$el[0].appendChild(this.renderer.domElement);
+    else
+        this.$el.append('<div>Sorry your browser does not support WebGL</div>');
+
       return this;
     },
 
