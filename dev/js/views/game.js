@@ -20,10 +20,12 @@
    PoT.SCORE_TEXT_COLOR = 0xd29ce2;//0x5c5c5c;
 
   /**
-   * Root View
-   * @type {object}
+   * GameView
+   * @type Backbone.View
    */
-  PoT.Views.HomeIndex = Backbone.View.extend({
+  PoT.Views.GameView = Backbone.View.extend({
+
+    template: tpl('game'),
 
     el: '#PoTContainer',
 
@@ -195,6 +197,8 @@
 
     initialize: function() {
 
+        this.subtemplate = tpl('gamecanvas');
+
         //add a key listener for processing the rotation of the main cube
         $(window).on("keydown", this.processKeyEvent.bind(this));
 
@@ -251,7 +255,7 @@
             };
 
         //defines the renderer size
-        this.renderer.setSize( window.innerWidth, window.innerHeight );
+        this.renderer.setSize( window.innerWidth * (75 /100), window.innerHeight * (75 /100));
 
         //render the scene with the chosen camera
         this.renderScene();
@@ -263,12 +267,18 @@
     },
 
     render: function() {
-    if(!_.isUndefined(this.renderer))
-        this.$el[0].appendChild(this.renderer.domElement);
+    this.$el.empty();
+    this.$el.append(this.template);
+
+    if(!_.isUndefined(this.renderer)){
+        //append canvas to the DOM
+       this.$el.append(this.renderer.domElement);
+       //tricks in order not to use a subview for canvas
+       $(this.renderer.domElement).wrap(this.subtemplate());
+       }
     else
         this.$el.append('<div>Sorry your browser does not support WebGL</div>');
 
-      return this;
     },
 
     initBox: function(){
@@ -368,7 +378,8 @@
         this.$el.off();
         alert('You Loose T.T : Your actual score is ' + this.getTotalScore());
 
-        window.location.reload();
+        PoT.AppRouter.Instance.navigate('', true);
+
         return false;
     },
     refreshDicePosition:function(model){

@@ -4,7 +4,10 @@ var gulp = require('gulp');
 var jshint  = require('gulp-jshint'),
     uglify  = require('gulp-uglify'),
     concat  = require('gulp-concat'),
+    minifyHTML = require('gulp-minify-html'),
+    minifyCSS  = require('gulp-minify-css'),
     connect = require('gulp-connect'),
+    partials   = require('gulp-partial-to-script'),
     path    = require('path');
 
 // Define tasks
@@ -25,7 +28,7 @@ gulp.task('compress', function() {
 
 // concat vendor libs
 gulp.task('scripts', function() {
-  gulp.src(['node_modules/jquery/dist/jquery.min.js','node_modules/underscore/underscore-min.js','node_modules/backbone/backbone-min.js','node_modules/three/three.min.js'])
+  gulp.src(['node_modules/jquery/dist/jquery.min.js','node_modules/jquery/dist/bootstrap.min.js','node_modules/underscore/underscore-min.js','node_modules/backbone/backbone-min.js','node_modules/three/three.min.js'])
     .pipe(concat('vendor.js'))
     .pipe(gulp.dest('./dist/'))
 });
@@ -41,13 +44,40 @@ gulp.task('app', function() {
 
 // concat app
 gulp.task('index', function() {
-  gulp.src(['dev/index.html'])
+
+ gulp.src('dev/partials/*.html')
+    .pipe(partials())
+    .pipe(concat('templates.html'))
+    .pipe(gulp.dest('./build')).on("end", function() {
+
+    gulp.src(['dev/header.html','./build/templates.html','dev/index.html'])
     .pipe(concat('index.html'))
+    .pipe(minifyHTML({spare: true}))
     .pipe(gulp.dest('./dist/'))
+
+    });
 });
 
 // The default task (called when you run `gulp` from cli)
-gulp.task('default', ['app','scripts','index']);
+gulp.task('default', ['app','scripts','index','vendorcss']);
+
+//build templates
+gulp.task('buildTemplates', function () {
+
+ gulp.src('dev/partials/*.html')
+    .pipe(partials())
+    .pipe(concat('templates.html'))
+    .pipe(gulp.dest('./dist'))
+    ;
+});
+
+//build vendor css
+gulp.task('vendorcss', function() {
+  return gulp.src('node_modules/bootstrap/dist/css/bootstrap.css')
+     .pipe(minifyCSS())
+     .pipe(concat('/vendor.min.css'))
+    .pipe(gulp.dest('dist/'));
+});
 
 //start a local webserver
 gulp.task('connect', function() {
