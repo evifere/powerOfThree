@@ -197,6 +197,8 @@
 
     initialize: function() {
 
+        this.subtemplate = tpl('gamecanvas');
+
         //add a key listener for processing the rotation of the main cube
         $(window).on("keydown", this.processKeyEvent.bind(this));
 
@@ -253,7 +255,7 @@
             };
 
         //defines the renderer size
-        this.renderer.setSize( window.innerWidth, window.innerHeight );
+        this.renderer.setSize( window.innerWidth * (75 /100), window.innerHeight * (75 /100));
 
         //render the scene with the chosen camera
         this.renderScene();
@@ -265,15 +267,16 @@
     },
 
     render: function() {
-    this.$el.html(this.template);
+    this.$el.empty();
+    this.$el.append(this.template);
 
-    console.log(this.$el);
-    if(!_.isUndefined(this.renderer))
-        this.$el[0].appendChild(this.renderer.domElement);
+    if(!_.isUndefined(this.renderer)){
+       this.$el.append(this.renderer.domElement);
+       $(this.renderer.domElement).wrap(this.subtemplate());
+       }
     else
         this.$el.append('<div>Sorry your browser does not support WebGL</div>');
 
-      return this;
     },
 
     initBox: function(){
