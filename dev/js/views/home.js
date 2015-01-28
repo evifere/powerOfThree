@@ -11,11 +11,11 @@
     template: tpl('home'),
 
     events:{
-        'click #start_game':'startGame'
+        'click .start_game':'startGame'
     },
 
-    startGame:function(){
-        PoT.AppRouter.Instance.navigate('game', true);
+    startGame:function(e){
+        PoT.AppRouter.Instance.navigate('game/'+ $(e.target).data('difficulty'), true);
     },
 
     initialize: function() {},
@@ -23,7 +23,6 @@
     render:function(){
 
     this.$el.html(this.template);
-      //this.$('#start').button();
 
     return this;
     }
