@@ -1,7 +1,5 @@
 (function(win, doc, PoT){
 
-PoT.MAX_DICES = 64;
-
 PoT.Models.Dice = Backbone.Model.extend({
 
     defaults: {
@@ -16,6 +14,12 @@ PoT.Models.Dice = Backbone.Model.extend({
 PoT.Collections.Dices = Backbone.Collection.extend({
   model: PoT.Models.Dice,
 
+  maxDices:0,
+  initialize:function(options)
+  {
+    this.maxDices = options.maxDices;
+  },
+
   initWithRandomDice:function(nbOfDice){
 
     for(d = 0;d < nbOfDice;d++){
@@ -26,7 +30,7 @@ PoT.Collections.Dices = Backbone.Collection.extend({
             value:_.random(1,2)
         });
 
-    if(this.length === PoT.MAX_DICES)
+    if(this.length ===  this.maxDices )
         {
         console.log('You loose T.T');
         return false;

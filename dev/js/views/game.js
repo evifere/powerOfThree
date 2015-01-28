@@ -199,9 +199,11 @@
      this.processRotation(rotationParams);
     },
 
-    initialize: function() {
+    initialize: function(options) {
 
         this.subtemplate = tpl('gamecanvas');
+
+        this.difficulty = options.difficulty;
 
         //add a key listener for processing the rotation of the main cube
         $(window).on("keydown", this.processKeyEvent.bind(this));
@@ -229,7 +231,7 @@
         this.initBox();
 
         //init the dice matrix
-        this.dices = new PoT.Collections.Dices();
+        this.dices = new PoT.Collections.Dices({'maxDices':Math.pow(this.difficulty,3)});
         this.dices.on('add', this.addDice, this);
 
         this.dices.initWithRandomDice(_.random(2,4));
