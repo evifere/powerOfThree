@@ -8,7 +8,23 @@ PoT.Models.Dice = Backbone.Model.extend({
         z:0,
         value:-1,
         mesh:null
-        }
+        },
+
+
+          //overriding set
+     validate : function(attributes, options) {
+
+        if(!(this.collection.minCoord <= attributes[PoT.X_AXIS] &&  attributes[PoT.X_AXIS] <= this.collection.maxCoord))
+            return 'X Out of range (' + this.collection.minCoord + ',' + this.collection.maxCoord+')';
+
+        if(!(this.collection.minCoord <= attributes[PoT.Y_AXIS] &&  attributes[PoT.Y_AXIS] <= this.collection.maxCoord))
+            return 'Y Out of range (' + this.collection.minCoord + ',' + this.collection.maxCoord+')';
+
+        if(!(this.collection.minCoord <= attributes[PoT.Z_AXIS] &&  attributes[PoT.Z_AXIS] <= this.collection.maxCoord))
+            return 'Z Out of range (' + this.collection.minCoord + ',' + this.collection.maxCoord+')';
+
+        return '';
+     }
 });
 
 PoT.Collections.Dices = Backbone.Collection.extend({
@@ -18,15 +34,17 @@ PoT.Collections.Dices = Backbone.Collection.extend({
   initialize:function(options)
   {
     this.maxDices = options.maxDices;
+    this.minCoord = options.minCoord;
+    this.maxCoord = options.maxCoord;
   },
 
   initWithRandomDice:function(nbOfDice){
 
     for(d = 0;d < nbOfDice;d++){
         var randomDice = new PoT.Models.Dice({
-            x:_.random(-2,1),
-            y:_.random(-2,1),
-            z:_.random(-2,1),
+            x:_.random(this.minCoord,this.maxCoord),
+            y:_.random(this.minCoord,this.maxCoord),
+            z:_.random(this.minCoord,this.maxCoord),
             value:_.random(1,2)
         });
 

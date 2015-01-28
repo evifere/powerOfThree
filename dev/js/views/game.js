@@ -13,8 +13,6 @@
 
    PoT.GO_LEFT = -0.02,PoT.GO_UP = -0.01, PoT.GO_RIGHT = -PoT.GO_LEFT, PoT.GO_DOWN = -PoT.GO_UP;
    PoT.MAIN_CUBE_WIDTH = 600;
-   PoT.DICE_WIDTH = PoT.MAIN_CUBE_WIDTH/4;
-   PoT.DICE_COORD_RATIO = PoT.DICE_WIDTH/2 ;
    PoT.MOUSE_THROTTLE_SENSIVITY = 600;
    PoT.REFRESH_SCENE_THROTTLE_SENSIVITY = 150;
 
@@ -42,9 +40,13 @@
         'touchend canvas':'processTouchEnd',
         'touchstart canvas':'processTouchStart',
         'mousewheel canvas':'processMouseWheel',//other browser
-        'DOMMouseScroll canvas':'processMouseWheel' // FF mousewheel event
+        'DOMMouseScroll canvas':'processMouseWheel', // FF mousewheel event,
+        'click .backhome':'backToHome'
     },
 
+    backToHome:function(){
+        PoT.AppRouter.Instance.navigate('', true);
+    },
     processMouseWheel:function(e){
         var zDirection = PoT.MOUSE_NO_DIRECTION;
         e = window.event || e;
@@ -203,7 +205,7 @@
 
         this.subtemplate = tpl('gamecanvas');
 
-        this.difficulty = options.difficulty;
+        this.difficulty = options.difficulty * 1;
 
         //add a key listener for processing the rotation of the main cube
         $(window).on("keydown", this.processKeyEvent.bind(this));
@@ -231,10 +233,13 @@
         this.initBox();
 
         //init the dice matrix
-        this.dices = new PoT.Collections.Dices({'maxDices':Math.pow(this.difficulty,3)});
+        this.dices = new PoT.Collections.Dices({'maxDices':Math.pow(this.difficulty,3),
+                                                'minCoord':this.getMinDiceCoord(),
+                                                'maxCoord':this.getMaxDiceCoord()
+                                                });
         this.dices.on('add', this.addDice, this);
 
-        this.dices.initWithRandomDice(_.random(2,4));
+        this.dices.initWithRandomDice(_.random(2,this.difficulty));
 
         //add an axis helper for debug
         //this.axisHelper = new THREE.AxisHelper( 300 );
@@ -269,12 +274,58 @@
 
     diceCoord:function (c)
     {
-        return  c * PoT.DICE_WIDTH + PoT.DICE_COORD_RATIO;
+        return  c * this.getDiceWidth() + this.getDiceRatio();
     },
 
+    getMinDiceCoord:function()
+    {
+        var minDice = 0;
+        var diff = this.difficulty;
+
+        switch(true)
+        {
+            case (diff == PoT.DIFFICULTY_DIFFICULT) :
+                minDice = 0;
+                break;
+            case (diff == PoT.DIFFICULTY_NORMAL) :
+                minDice = -1;
+                break;
+            case (diff == PoT.DIFFICULTY_EASY) :
+                minDice = -2;
+                break;
+            default:
+            console.log('not found');
+            break;
+        }
+
+        return minDice;
+    },
+    getMaxDiceCoord:function()
+    {
+        return 1;
+    },
+
+    getDiceWidth:function()
+    {
+        return  PoT.MAIN_CUBE_WIDTH / (this.difficulty);
+
+    },
+    getDiceRatio:function(){
+        return this.getDiceWidth()/2;
+    },
+    renderDifficultyMode:function(){
+    if(this.difficulty == PoT.DIFFICULTY_DIFFICULT)
+        return this.$('#mode').text('DIFFICULT Mode');
+
+    if(this.difficulty == PoT.DIFFICULTY_NORMAL)
+        return this.$('#mode').text('Normal Mode');
+
+    return this.$('#mode').text('Easy Mode');
+    },
     render: function() {
     this.$el.empty();
     this.$el.append(this.template);
+    this.renderDifficultyMode();
 
     if(!_.isUndefined(this.renderer)){
         //append canvas to the DOM
@@ -295,7 +346,7 @@
 
     addDice:function(model)
     {
-        this.geometry = new THREE.BoxGeometry( PoT.DICE_WIDTH , PoT.DICE_WIDTH, PoT.DICE_WIDTH);
+        this.geometry = new THREE.BoxGeometry( this.getDiceWidth(),this.getDiceWidth(),this.getDiceWidth());
         this.material = new THREE.MeshBasicMaterial({map:this.getFaceTexture(model.get('value'))});
 
         var dice = new THREE.Mesh( this.geometry, this.material );
@@ -340,7 +391,7 @@
                     return true;
                 }
 
-                if(Math.abs(model.get(axis) + operation)  < 3){
+                if(Math.abs(model.get(axis) + operation)  <=  _self.difficulty - 1  ){
                     var newSpotCoords = model.pick(PoT.X_AXIS,PoT.Y_AXIS,PoT.Z_AXIS);
 
                     newSpotCoords[axis] += operation;
@@ -349,7 +400,7 @@
 
                     //if new position is not occupied move the dice
                     if(_.isUndefined(newposition)){
-                        model.set(axis,model.get(axis) + operation);
+                        model.set(axis,model.get(axis) + operation,{validate:true});
                     }
                     else{//we have a collision merge the dice if they have the same value
 
@@ -357,10 +408,11 @@
                             newposition.set('value',newposition.get('value') + model.get('value'));
                             model.destroy();
                         }
-                        else
+                        else{
                             return true;
+                        }
                     }
-                }
+                }//end if
             });
         }//end for loop
 
@@ -486,8 +538,10 @@
         this.dices.forEach (function(model, index){
             var dice = model.get('mesh');
 
-            dice.rotation.x += rotationParams.x;
-            dice.rotation.y += rotationParams.y;
+            if(!_.isUndefined(dice) && dice != null){
+                dice.rotation.x += rotationParams.x;
+                dice.rotation.y += rotationParams.y;
+            }
         });
 
         this.mainBox = new THREE.Box3().setFromObject(this.mainCube);
